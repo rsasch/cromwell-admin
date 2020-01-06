@@ -36,26 +36,26 @@ code {
   font-size: 1rem;
 }
 
-.metadata-container {
+.feature-container {
   padding: 0.5em;
 }
 
-.metadata-field {
+.form-field {
   margin: 1rem 0;
   display: flex;
 }
 
-.button-container {
-  align-content: end;
-}
-
-.metadata-field label {
+.form-field label {
   padding-right: 0.25em;
   vertical-align: top;
   width: 7.5em;
   text-align: left;
 }
 
-.metadata-field textarea {
+.form-field textarea {
   width: 50em;
+}
+
+.button-container {
+  align-content: end;
 }

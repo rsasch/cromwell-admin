@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './index.css';
+import CallCacheDiff from './CallCacheDiff'
 import Metadata from './Metadata'
 import Tabs from './component/Tabs'
 
@@ -58,7 +59,7 @@ class Console extends Component {
         <div className={this.state.error ? 'error' : 'hide'}>{this.state.error}</div>
         <div className="token-header">
           <form>
-            <div className="metadata-field">
+            <div className="form-field">
               <label htmlFor="token">Auth token</label>
               <textarea
                 name="token"
@@ -77,7 +78,11 @@ class Console extends Component {
             />
           </div>
           <div label="Callcache">
-            <div>Callcache div goes here</div>
+            <CallCacheDiff
+              config={this.state.config}
+              token={this.state.token}
+              handleError={this.handleError}
+            />
           </div>
         </Tabs>
       </div>

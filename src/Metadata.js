@@ -61,9 +61,9 @@ class Metadata extends Component {
   render() {
     const { workflowId, metadata } = this.state;
     return (
-      <div className="metadata-container">
+      <div className="feature-container">
         <form>
-          <div className="metadata-field">
+          <div className="form-field">
             <label htmlFor="workflowId">Workflow ID</label>
             <textarea
               name="workflowId"
