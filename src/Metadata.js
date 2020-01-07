@@ -23,10 +23,10 @@ class Metadata extends Component {
   }
 
   makeCall (event) {
-    if (this.props.token && this.props.config && this.props.config.orchestrationUrlRoot) {
-      const { workflowId } = this.state;
-
-      fetch(`${this.props.config.orchestrationUrlRoot}/api/workflows/v1/${workflowId}/metadata`, {
+    const { workflowId } = this.state;
+    if (this.props.token && this.props.config && this.props.config.orchestrationUrlRoot && workflowId) {
+      let url = new URL(`${this.props.config.orchestrationUrlRoot}/api/workflows/v1/${workflowId}/metadata`)
+      fetch(url, {
         method: 'get',
         headers: new Headers({
           'Authorization': `Bearer ${this.props.token}`,
@@ -50,9 +50,11 @@ class Metadata extends Component {
             this.props.handleError('there was an error getting metadata: ' + error)
           }
         )
+    } else if (!workflowId) {
+      alert('You must provide a workflow ID.');
     } else if (!this.props.config && this.props.config.orchestrationUrlRoot) {
       alert('There is no endpoint defined in the config file.');
-    }else if (!this.props.token) {
+    } else if (!this.props.token) {
       alert('You must set an auth token first.');
     }
     event.preventDefault();
@@ -64,7 +66,7 @@ class Metadata extends Component {
       <div className="feature-container">
         <form>
           <div className="form-field">
-            <label htmlFor="workflowId">Workflow ID</label>
+            <label htmlFor="workflowId">Workflow (job) ID</label>
             <textarea
               name="workflowId"
               defaultValue={workflowId}
@@ -72,7 +74,7 @@ class Metadata extends Component {
               id="workflowId" />
           </div>
           <div className="button-container">
-            <button type="submit" onClick={this.makeCall}>Go</button>
+            <button type="submit" onClick={this.makeCall}>Get Metadata</button>
           </div>
         </form>
         <div className={metadata.workflowName ? 'metadata-json' : 'hide'}><ReactJson
