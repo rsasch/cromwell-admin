@@ -33,14 +33,17 @@ class CallCacheDiff extends Component {
   makeCall (event) {
     if (this.props.token && this.props.config && this.props.config.orchestrationUrlRoot) {
       let url = new URL(`${this.props.config.orchestrationUrlRoot}/api/workflows/v1/callcaching/diff`);
-      url.search = new URLSearchParams({
+      let fields = {
         workflowA: this.state.workflowA,
         workflowB: this.state.workflowB,
         callA: this.state.call1A + '.' + this.state.call2A,
-        callB: this.state.call1B + '.' + this.state.call2B,
-        indexA: this.state.indexA,
-        indexB: this.state.indexB
-      }).toString();
+        callB: this.state.call1B + '.' + this.state.call2B
+      };
+      if (this.state.indexA && this.state.indexB) {
+        fields.indexA = this.state.indexA;
+        fields.indexB = this.state.indexB;
+      }
+      url.search = new URLSearchParams(fields).toString();
 
       fetch(url, {
         method: 'get',

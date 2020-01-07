@@ -71,15 +71,15 @@ class Console extends Component {
           </form>
         </div>
         <Tabs>
-          <div label="Callcache">
-            <CallCacheDiff
+          <div label="Metadata">
+            <Metadata
               config={this.state.config}
               token={this.state.token}
               handleError={this.handleError}
             />
           </div>
-          <div label="Metadata">
-            <Metadata
+          <div label="Callcache">
+            <CallCacheDiff
               config={this.state.config}
               token={this.state.token}
               handleError={this.handleError}
