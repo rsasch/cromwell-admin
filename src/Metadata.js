@@ -67,7 +67,8 @@ class Metadata extends Component {
         <form>
           <div className="form-field">
             <label htmlFor="workflowId">Workflow (job) ID</label>
-            <textarea
+            <input
+              type="text"
               name="workflowId"
               defaultValue={workflowId}
               onChange={this.handleInputChange}
@@ -77,7 +78,7 @@ class Metadata extends Component {
             <button type="submit" onClick={this.makeCall}>Get Metadata</button>
           </div>
         </form>
-        <div className={metadata.workflowName ? 'metadata-json' : 'hide'}><ReactJson
+        <div className={metadata.workflowName ? 'show-json' : 'hide'}><ReactJson
           src={metadata}
           collapsed={false}
           collapseStringsAfterLength={180}

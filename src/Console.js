@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import './index.css';
 import CallCacheDiff from './CallCacheDiff'
 import Metadata from './Metadata'
 import Tabs from './component/Tabs'
@@ -65,7 +64,9 @@ class Console extends Component {
                 name="token"
                 defaultValue={this.state.token}
                 onChange={this.handleInputChange}
-                id="token" />
+                id="token"
+                rows="3"
+              />
             </div>
           </form>
         </div>

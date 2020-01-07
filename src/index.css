@@ -29,7 +29,12 @@ code {
   margin: 1rem 1rem 2rem 1rem;
 }
 
-.metadata-json {
+.token-header .form-field label {
+  text-align: right;
+  margin-right: 0.5rem;
+}
+
+.show-json {
   margin: 0.5em;
   padding: 0.5em;
   background-color: #eee;
@@ -40,10 +45,16 @@ code {
   padding: 0 0.5em;
 }
 
+form {
+  vertical-align: top;
+}
+
 fieldset {
   margin-top: 0.5rem;
   margin-right: 0.5rem;
+  margin-bottom: 1rem;
   display: inline;
+  float: left;
 }
 
 .form-field {
@@ -58,9 +69,19 @@ fieldset {
   text-align: left;
 }
 
+.form-field label label {
+  font-weight: normal;
+  font-size: 0.75rem;
+}
+
 .form-field textarea,
 .form-field input[type=text] {
   width: 50em;
+  border: 1px solid #999;
+}
+
+.form-field input[type=text] {
+  height: 1rem;
 }
 
 .button-container {
@@ -71,6 +92,7 @@ fieldset {
 .footnote{
   margin: 1rem 0;
   font-size: 0.7rem;
+  clear: both;
 }
 
 .headnote {

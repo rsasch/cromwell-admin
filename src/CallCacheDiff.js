@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactJson from 'react-json-view';
 
 class CallCacheDiff extends Component {
   constructor(props) {
@@ -6,16 +7,17 @@ class CallCacheDiff extends Component {
     this.state = {
       workflowA: '',
       workflowB: '',
-      callA1: '',
-      callA2: '',
+      call1A: '',
+      call2A: '',
       indexA: '',
-      callB1: '',
-      callB2: '',
+      call1B: '',
+      call2B: '',
       indexB: '',
       callCacheDiff: {}
     };
     this.makeCall = this.makeCall.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
+    this.copyFieldValue = this.copyFieldValue.bind(this)
   }
 
   handleInputChange(event) {
@@ -34,10 +36,10 @@ class CallCacheDiff extends Component {
       url.search = new URLSearchParams({
         workflowA: this.state.workflowA,
         workflowB: this.state.workflowB,
-        callA: this.state.callA1 + '.' + this.state.callA2,
-        // indexA: this.state.indexA ? this.state.indexA : null,
-        callB: this.state.callB1 + '.' + this.state.callB2,
-        // indexB: this.state.indexB ? this.state.indexB : null
+        callA: this.state.call1A + '.' + this.state.call2A,
+        callB: this.state.call1B + '.' + this.state.call2B,
+        indexA: this.state.indexA,
+        indexB: this.state.indexB
       }).toString();
 
       fetch(url, {
@@ -72,6 +74,23 @@ class CallCacheDiff extends Component {
     event.preventDefault();
   }
 
+  copyFieldValue(event) {
+    const id = event.target.id
+    const fieldA = document.getElementById(id + 'A')
+    const fieldB = document.getElementById(id + 'B')
+    if (event.target.checked && fieldA && fieldA.value) {
+      fieldB.value = fieldA.value
+      this.setState({
+        [id + 'B']: fieldA.value
+      })
+    } else {
+      fieldB.value = ''
+      this.setState({
+        [id + 'B']: ''
+      })
+    }
+  }
+
   render() {
     return (
       <div className="feature-container">
@@ -81,26 +100,27 @@ class CallCacheDiff extends Component {
             <legend>Call #1</legend>
             <div className="form-field">
               <label htmlFor="workflowA" className="required">Workflow (job) ID</label>
-              <textarea
+              <input
+                type="text"
                 id="workflowA"
                 defaultValue={this.state.workflowA}
                 onChange={this.handleInputChange}
               />
             </div>
             <div className="form-field">
-              <label htmlFor="callA1" className="required">Workflow Name</label>
+              <label htmlFor="call1A" className="required">Workflow Name</label>
               <input
                 type="text"
-                id="callA1"
-                defaultValue={this.state.callA1}
+                id="call1A"
+                defaultValue={this.state.call1A}
                 onChange={this.handleInputChange}
               />
             </div>
             <div className="form-field">
-              <label htmlFor="callA2" className="required">Call (task) Name</label>
+              <label htmlFor="call2A" className="required">Call (task) Name</label>
               <input
                 type="text"
-                id="callA2"
+                id="call2A"
                 defaultValue={this.state.callA2}
                 onChange={this.handleInputChange}
               />
@@ -119,32 +139,56 @@ class CallCacheDiff extends Component {
             <legend>Call #2</legend>
             <div className="form-field">
               <label htmlFor="workflowB" className="required">Workflow (job) ID</label>
-              <textarea
+              <input
+                type="text"
                 id="workflowB"
                 defaultValue={this.state.workflowB}
                 onChange={this.handleInputChange}
               />
             </div>
             <div className="form-field">
-              <label htmlFor="callB1" className="required">Workflow Name</label>
+              <label htmlFor="call1B" className="required">
+                Workflow Name<br />
+                <input
+                  type="checkbox"
+                  id="call1"
+                  onClick={this.copyFieldValue}
+                />
+                <label htmlFor="call1">same as #1</label>
+              </label>
               <input
                 type="text"
-                id="callB1"
-                defaultValue={this.state.callB1}
+                id="call1B"
+                defaultValue={this.state.call1B}
                 onChange={this.handleInputChange}
               />
             </div>
             <div className="form-field">
-              <label htmlFor="callB2" className="required">Call (task) Name</label>
+              <label htmlFor="call2B" className="required">
+                Call (task) Name<br />
+                <input
+                  type="checkbox"
+                  id="call2"
+                  onClick={this.copyFieldValue}
+                />
+                <label htmlFor="call2">same as #1</label>
+              </label>
               <input
                 type="text"
-                id="callB2"
-                defaultValue={this.state.callB2}
+                id="call2B"
+                defaultValue={this.state.call2B}
                 onChange={this.handleInputChange}
               />
             </div>
             <div className="form-field">
-              <label htmlFor="indexB">Index (scattered task shard) Number*</label>
+              <label htmlFor="indexB">Index (scattered task shard) Number*<br />
+                <input
+                  type="checkbox"
+                  id="index"
+                  onClick={this.copyFieldValue}
+                />
+                <label htmlFor="index">same as #1</label>
+              </label>
               <input
                 type="text"
                 id="indexB"
@@ -158,7 +202,17 @@ class CallCacheDiff extends Component {
             <button type="submit" onClick={this.makeCall}>Get Call Cache Diff</button>
           </div>
         </form>
-        <div className={this.state.callCacheDiff.hashDifferential ? 'callcachediff' : 'hide'}>{JSON.stringify(this.state.callCacheDiff.hashDifferential)}</div>
+        <div className={this.state.callCacheDiff && this.state.callCacheDiff.callA ? 'show-json' : 'hide'}>
+          <ReactJson
+            src={this.state.callCacheDiff}
+            collapsed={false}
+            collapseStringsAfterLength={180}
+            displayDataTypes={false}
+            shouldCollapse={({ namespace }) =>
+              namespace.indexOf("callA") > -1 ||
+              namespace.indexOf("callB") > -1
+            }
+          /></div>
       </div>
     )
   }
