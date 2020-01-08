@@ -98,8 +98,8 @@ class Metadata extends Component {
         <div className={this.state.isLoading ? 'loading' : 'hide'}>
           <BarLoader
             css="margin: 0 auto;"
-            height="10"
-            width="400"
+            height="10px"
+            width="400px"
 color={"#ccc"}
           />
         </div>

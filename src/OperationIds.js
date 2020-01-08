@@ -81,6 +81,9 @@ class OperationIds extends Component {
                 isLoading: false
               });
             }
+            this.setState({
+              isLoading: false
+            });
           },
           (error) => {
             this.setState({
@@ -116,10 +119,10 @@ class OperationIds extends Component {
               />
             </div>
             <div className="form-field">
-              <label htmlFor="callA">Call (task) Name</label>
+              <label htmlFor="call">Call (task) Name</label>
               <input
                 type="text"
-                id="call2"
+                id="call"
                 defaultValue={this.state.call}
                 onChange={this.handleInputChange}
               />
@@ -181,8 +184,8 @@ class OperationIds extends Component {
         <div className={this.state.isLoading ? 'loading' : 'hide'}>
           <BarLoader
             css="margin: 0 auto;"
-            height="10"
-            width="400"
+            height="10px"
+            width="400px"
 color={"#ccc"}
           />
         </div>
@@ -191,8 +194,8 @@ color={"#ccc"}
             <thead>
               <tr>
                 { this.state.displayCall &&  <th>Call/Task</th> }
-                { this.state.displayIndex ?  <th>Shard Number</th> : null}
-                { this.state.displayAttempt ?  <th>Attempt Number</th> : null}
+                { this.state.displayIndex && <th>Shard Number</th> }
+                { this.state.displayAttempt && <th>Attempt Number</th> }
                 <th>Operation ID</th>
               </tr>
             </thead>
@@ -201,9 +204,9 @@ color={"#ccc"}
               this.state.operationIds.map((row, num) => {
                 return (
                   <tr key={num}>
-                    { this.state.displayCall ?  <td>{row.call}</td> : null}
-                    { this.state.displayIndex ?  <td>{row.index}</td> : null}
-                    { this.state.displayAttempt ?  <td>{row.attempt}</td> : null}
+                    { this.state.displayCall && <td>{row.call}</td> }
+                    { this.state.displayIndex && <td>{row.index}</td> }
+                    { this.state.displayAttempt && <td>{row.attempt}</td> }
                     <td>{row.operationId}</td>
                   </tr>
                 )
