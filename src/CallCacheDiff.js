@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactJson from 'react-json-view';
+import BarLoader from 'react-spinners/BarLoader';
 
 class CallCacheDiff extends Component {
   constructor(props) {
@@ -13,7 +14,8 @@ class CallCacheDiff extends Component {
       call1B: '',
       call2B: '',
       indexB: '',
-      callCacheDiff: {}
+      callCacheDiff: {},
+      isLoading: false
     };
     this.makeCall = this.makeCall.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
@@ -31,7 +33,13 @@ class CallCacheDiff extends Component {
   }
 
   makeCall (event) {
+    this.setState({
+      isLoading: false
+    });
     if (this.props.token && this.props.config && this.props.config.orchestrationUrlRoot) {
+      this.setState({
+        isLoading: true
+      });
       let url = new URL(`${this.props.config.orchestrationUrlRoot}/api/workflows/v1/callcaching/diff`);
       let fields = {
         workflowA: this.state.workflowA,
@@ -56,17 +64,26 @@ class CallCacheDiff extends Component {
           if (res.status === 200) {
             return res.json()
           } else {
-            this.props.handleError('there was an error getting call cache diff')
+            this.setState({
+              isLoading: false
+            });
+            this.props.handleError(res.status, 'there was an error getting call cache diff')
           }
         })
         .then(
           (result) => {
             this.setState({
+              isLoading: false
+            });
+            this.setState({
               callCacheDiff: result
             });
           },
           (error) => {
-            this.props.handleError('there was an error getting call cache diff: ' + error)
+            this.setState({
+              isLoading: false
+            });
+            this.props.handleError(null, 'there was an error getting call cache diff: ' + error)
           }
         )
     } else if (!this.props.config && this.props.config.orchestrationUrlRoot) {
@@ -205,7 +222,15 @@ class CallCacheDiff extends Component {
             <button type="submit" onClick={this.makeCall}>Get Call Cache Diff</button>
           </div>
         </form>
-        <div className={this.state.callCacheDiff && this.state.callCacheDiff.callA ? 'show-json' : 'hide'}>
+        <div className={this.state.isLoading ? 'loading' : 'hide'}>
+          <BarLoader
+            css="margin: 0 auto;"
+            height="10"
+            width="400"
+color={"#ccc"}
+          />
+        </div>
+        <div className={!this.state.isLoading && this.state.callCacheDiff && this.state.callCacheDiff.callA ? 'show-json' : 'hide'}>
           <ReactJson
             src={this.state.callCacheDiff}
             collapsed={false}

@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import ReactJson from 'react-json-view';
+import BarLoader from 'react-spinners/BarLoader'
 
 class Metadata extends Component {
   constructor(props) {
     super(props);
     this.state = {
       metadata: {},
-      workflowId: ''
+      workflowId: '',
+      isLoading: false
     };
     this.makeCall = this.makeCall.bind(this)
     this.handleInputChange = this.handleInputChange.bind(this)
@@ -23,8 +25,14 @@ class Metadata extends Component {
   }
 
   makeCall (event) {
+    this.setState({
+      isLoading: false
+    })
     const { workflowId } = this.state;
     if (this.props.token && this.props.config && this.props.config.orchestrationUrlRoot && workflowId) {
+      this.setState({
+        isLoading: true
+      });
       let url = new URL(`${this.props.config.orchestrationUrlRoot}/api/workflows/v1/${workflowId}/metadata`)
       fetch(url, {
         method: 'get',
@@ -37,17 +45,26 @@ class Metadata extends Component {
           if (res.status === 200) {
             return res.json()
           } else {
-            this.props.handleError('there was an error getting metadata')
+            this.setState({
+              isLoading: false
+            });
+            this.props.handleError(res.status, 'there was an error getting metadata')
           }
         })
         .then(
           (result) => {
             this.setState({
+              isLoading: false
+            });
+            this.setState({
               metadata: result
             });
           },
           (error) => {
-            this.props.handleError('there was an error getting metadata: ' + error)
+            this.setState({
+              isLoading: false
+            });
+            this.props.handleError(null, 'there was an error getting metadata: ' + error)
           }
         )
     } else if (!workflowId) {
@@ -78,7 +95,15 @@ class Metadata extends Component {
             <button type="submit" onClick={this.makeCall}>Get Metadata</button>
           </div>
         </form>
-        <div className={metadata.workflowName ? 'show-json' : 'hide'}><ReactJson
+        <div className={this.state.isLoading ? 'loading' : 'hide'}>
+          <BarLoader
+            css="margin: 0 auto;"
+            height="10"
+            width="400"
+color={"#ccc"}
+          />
+        </div>
+        <div className={!this.state.isLoading && metadata && metadata.workflowName ? 'show-json' : 'hide'}><ReactJson
           src={metadata}
           collapsed={false}
           collapseStringsAfterLength={180}

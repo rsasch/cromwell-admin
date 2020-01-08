@@ -13,6 +13,10 @@ code {
     monospace;
 }
 
+.App {
+  width: auto;
+}
+
 .hide {
   display: none;
 }
@@ -45,8 +49,9 @@ code {
   padding: 0 0.5em;
 }
 
-form {
-  vertical-align: top;
+.loading {
+  text-align: center;
+  margin: 0.5rem 0;
 }
 
 fieldset {
@@ -102,4 +107,22 @@ fieldset {
 
 .required {
   font-weight: bold;
+}
+
+table {
+  margin: 1rem auto;
+  border-collapse: collapse;
+}
+
+th {
+  color: #fff;
+  background-color: #666;
+}
+
+th,
+td {
+  text-align: left;
+  border: 1px solid #ccc;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
 }

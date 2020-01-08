@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import CallCacheDiff from './CallCacheDiff'
 import Metadata from './Metadata'
+import OperationIds from './OperationIds'
 import Tabs from './component/Tabs'
 
 class Console extends Component {
@@ -19,7 +20,7 @@ class Console extends Component {
     try {
       return fetch('config.json').then( body => body.json());
     } catch(error) {
-      this.handleError(error)
+      this.handleError(null, error)
     }
   }
 
@@ -32,13 +33,18 @@ class Console extends Component {
           });
         })
     } catch (error) {
-      this.handleError(error)
+      this.handleError(null, error)
     }
   }
 
-  handleError(error) {
+  handleError(code, message) {
+    if (code === 401) {
+      message += ' [token might be expired]'
+    } else if (code === 404) {
+      message += ' [not found]'
+    }
     this.setState({
-      error: error
+      error: message
     })
   }
 
@@ -80,6 +86,13 @@ class Console extends Component {
           </div>
           <div label="Callcache">
             <CallCacheDiff
+              config={this.state.config}
+              token={this.state.token}
+              handleError={this.handleError}
+            />
+          </div>
+          <div label="Operation ID(s)">
+            <OperationIds
               config={this.state.config}
               token={this.state.token}
               handleError={this.handleError}
