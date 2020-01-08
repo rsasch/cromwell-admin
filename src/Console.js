@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import CallCacheDiff from './CallCacheDiff'
 import Metadata from './Metadata'
 import OperationIds from './OperationIds'
-import Tabs from './component/Tabs'
+import Tabs from './layout/Tabs'
 
 class Console extends Component {
   constructor(props) {
