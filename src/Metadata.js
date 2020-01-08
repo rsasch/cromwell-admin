@@ -108,6 +108,10 @@ color={"#ccc"}
           collapsed={false}
           collapseStringsAfterLength={180}
           displayDataTypes={false}
+          shouldCollapse={({ namespace }) =>
+            namespace.indexOf("workflowProcessingEvents") > -1 ||
+            namespace.indexOf("submittedFiles") > -1
+          }
         /></div>
       </div>
     )
