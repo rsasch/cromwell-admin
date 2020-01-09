@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactJson from 'react-json-view';
-import BarLoader from 'react-spinners/BarLoader'
+import Spinner from './layout/Spinner'
 
 class Metadata extends Component {
   constructor(props) {
@@ -29,20 +29,21 @@ class Metadata extends Component {
       isLoading: false
     })
     const { workflowId } = this.state;
-    if (this.props.token && this.props.config && this.props.config.orchestrationUrlRoot && workflowId) {
+    if (window.gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse(true).access_token && this.props.config && this.props.config.orchestrationUrlRoot && workflowId) {
       this.setState({
         isLoading: true
       });
-      let url = new URL(`${this.props.config.orchestrationUrlRoot}/api/workflows/v1/${workflowId}/metadata`)
+      let url = `${this.props.config.orchestrationUrlRoot}/api/workflows/v1/${workflowId}/metadata`
       fetch(url, {
         method: 'get',
-        headers: new Headers({
-          'Authorization': `Bearer ${this.props.token}`,
+        headers: {
+          'Authorization': `Bearer ${window.gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse(true).access_token}`,
           'Accept': 'application/json'
-        })
+        }
       })
         .then(res => {
           if (res.status === 200) {
+            this.props.handleError('')
             return res.json()
           } else {
             this.setState({
@@ -71,8 +72,6 @@ class Metadata extends Component {
       alert('You must provide a workflow ID.');
     } else if (!this.props.config && this.props.config.orchestrationUrlRoot) {
       alert('There is no endpoint defined in the config file.');
-    } else if (!this.props.token) {
-      alert('You must set an auth token first.');
     }
     event.preventDefault();
   }
@@ -96,12 +95,7 @@ class Metadata extends Component {
           </div>
         </form>
         <div className={this.state.isLoading ? 'loading' : 'hide'}>
-          <BarLoader
-            css="margin: 0 auto;"
-            height="10px"
-            width="400px"
-color={"#ccc"}
-          />
+          <Spinner loading={this.state.isLoading} />
         </div>
         <div className={!this.state.isLoading && metadata && metadata.workflowName ? 'show-json' : 'hide'}><ReactJson
           src={metadata}

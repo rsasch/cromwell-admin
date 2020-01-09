@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactJson from 'react-json-view';
-import BarLoader from 'react-spinners/BarLoader';
+import Spinner from './layout/Spinner'
 
 class CallCacheDiff extends Component {
   constructor(props) {
@@ -36,7 +36,7 @@ class CallCacheDiff extends Component {
     this.setState({
       isLoading: false
     });
-    if (this.props.token && this.props.config && this.props.config.orchestrationUrlRoot) {
+    if (window.gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse(true).access_token && this.props.config && this.props.config.orchestrationUrlRoot) {
       this.setState({
         isLoading: true
       });
@@ -56,12 +56,13 @@ class CallCacheDiff extends Component {
       fetch(url, {
         method: 'get',
         headers: new Headers({
-          'Authorization': `Bearer ${this.props.token}`,
+          'Authorization': `Bearer ${window.gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse(true).access_token}`,
           'Accept': 'application/json'
         })
       })
         .then(res => {
           if (res.status === 200) {
+            this.props.handleError('')
             return res.json()
           } else {
             this.setState({
@@ -88,7 +89,7 @@ class CallCacheDiff extends Component {
         )
     } else if (!this.props.config && this.props.config.orchestrationUrlRoot) {
       alert('There is no endpoint defined in the config file.');
-    }else if (!this.props.token) {
+    }else if (!window.gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse(true).access_token) {
       alert('You must set an auth token first.');
     }
     event.preventDefault();
@@ -223,12 +224,7 @@ class CallCacheDiff extends Component {
           </div>
         </form>
         <div className={this.state.isLoading ? 'loading' : 'hide'}>
-          <BarLoader
-            css="margin: 0 auto;"
-            height="10px"
-            width="400px"
-color={"#ccc"}
-          />
+          <Spinner loading={this.state.isLoading} />
         </div>
         <div className={!this.state.isLoading && this.state.callCacheDiff && this.state.callCacheDiff.callA ? 'show-json' : 'hide'}>
           <ReactJson

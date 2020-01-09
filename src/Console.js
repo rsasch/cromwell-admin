@@ -1,19 +1,36 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import CallCacheDiff from './CallCacheDiff'
+import Tabs from './layout/Tabs'
 import Metadata from './Metadata'
 import OperationIds from './OperationIds'
-import Tabs from './layout/Tabs'
+
+
+class SignInButton extends Component {
+  componentDidMount() {
+    window.gapi.signin2.render('signInButton', {
+      scope: 'openid profile email',
+      height: 20,
+      longtitle: true,
+      theme: 'light',
+      prompt: 'select_account'
+    })
+  }
+
+  render() {
+    return <div id="signInButton" />
+  }
+}
 
 class Console extends Component {
   constructor(props) {
     super(props);
     this.state = {
       config: {},
-      token: '',
       error: ''
     };
     this.handleInputChange = this.handleInputChange.bind(this)
     this.handleError = this.handleError.bind(this)
+    this.signOut = this.signOut.bind(this)
   }
 
   getConfig() {
@@ -24,16 +41,27 @@ class Console extends Component {
     }
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     try {
-      this.getConfig()
-        .then((config) => {
-          this.setState({
-            config: config
-          });
+      const config = await this.getConfig()
+      this.setState({ config });
+      await new Promise(resolve => window.gapi.load('auth2', resolve))
+      await window.gapi.auth2.init({ clientId: config.googleClientId })
+      this.setState({ signInReady: true, isSignedIn: window.gapi.auth2.getAuthInstance().currentUser.get().isSignedIn() })
+
+      window.gapi.auth2.getAuthInstance().currentUser.listen((user) => {
+        this.setState({
+          isSignedIn: user.isSignedIn()
         })
+      })
     } catch (error) {
       this.handleError(null, error)
+    }
+  }
+
+  signOut() {
+    if (this.state.isSignedIn) {
+      window.gapi.auth2.getAuthInstance().signOut()
     }
   }
 
@@ -61,44 +89,31 @@ class Console extends Component {
   render() {
     return (
       <div className="console-container">
-        <div className={this.state.error ? 'error' : 'hide'}>{this.state.error}</div>
-        <div className="token-header">
-          <form>
-            <div className="form-field">
-              <label htmlFor="token">Auth token</label>
-              <textarea
-                name="token"
-                defaultValue={this.state.token}
-                onChange={this.handleInputChange}
-                id="token"
-                rows="3"
-              />
-            </div>
-          </form>
-        </div>
-        <Tabs>
+        <div className={this.state.error ? 'error' : 'hide'}>{JSON.stringify(this.state.error)}</div>
+        <div className="auth-header">
+          {!this.state.isSignedIn && this.state.signInReady && <div><SignInButton /></div>}
+          {this.state.isSignedIn &&  <button onClick={this.signOut} className="sign-out">sign out</button>}
+      </div>
+        {this.state.isSignedIn && <Tabs>
           <div label="Metadata">
             <Metadata
               config={this.state.config}
-              token={this.state.token}
               handleError={this.handleError}
             />
           </div>
           <div label="Callcache">
             <CallCacheDiff
               config={this.state.config}
-              token={this.state.token}
               handleError={this.handleError}
             />
           </div>
           <div label="Operation ID(s)">
             <OperationIds
               config={this.state.config}
-              token={this.state.token}
               handleError={this.handleError}
             />
           </div>
-        </Tabs>
+        </Tabs>}
       </div>
     )
   }
