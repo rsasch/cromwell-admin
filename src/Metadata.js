@@ -33,6 +33,7 @@ class Metadata extends Component {
       this.setState({
         isLoading: true
       });
+      this.props.handleError('')
       let url = `${this.props.config.orchestrationUrlRoot}/api/workflows/v1/${workflowId}/metadata`
       fetch(url, {
         method: 'get',

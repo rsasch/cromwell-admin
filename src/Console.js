@@ -35,6 +35,9 @@ class Console extends Component {
 
   getConfig() {
     try {
+      this.state = {
+        error: ''
+      };
       return fetch('config.json').then( body => body.json());
     } catch(error) {
       this.handleError(null, error)
@@ -60,6 +63,9 @@ class Console extends Component {
   }
 
   signOut() {
+    this.state = {
+      error: ''
+    };
     if (this.state.isSignedIn) {
       window.gapi.auth2.getAuthInstance().signOut()
     }
@@ -82,6 +88,7 @@ class Console extends Component {
     const name = target.name;
 
     this.setState({
+      error: '',
       [name]: value
     });
   }

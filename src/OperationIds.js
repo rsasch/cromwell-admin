@@ -35,6 +35,7 @@ class OperationIds extends Component {
       this.setState({
         isLoading: true
       });
+      this.props.handleError('')
       let url = new URL(`${this.props.config.orchestrationUrlRoot}/api/workflows/v1/${this.state.workflowId}/metadata`)
       url.search = new URLSearchParams({
         'includeKey' : 'jobId'
